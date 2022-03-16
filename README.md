@@ -10,6 +10,7 @@ This repo contains the simple pendulum simulation, implemented in three differen
 - A very simple webpage
 - A more nice looking webpage, with explanations on how it all works
 <hr>
+
 ### [The python script](https://github.com/Demiz1/SimplePendulum/blob/main/PendulumSimulation.py)
 Uses numpy, math and matplotlib library.
 Plots the angle of the pendulum, its angular rate together with a nice visualizeation of the pendulum state.
