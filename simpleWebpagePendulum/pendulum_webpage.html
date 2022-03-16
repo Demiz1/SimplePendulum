@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!-- plot library https://plotly.com/javascript/getting-started/ -->
+<!-- ode solver https://jurasic-park.de/ode/ -->
+<!-- 3d engine https://threejs.org/ -->
+<!-- matrice math in js https://mathjs.org -->
+<html lang="en">
+<head>
+  <title>Pendulum simulation</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <!-- <script src="https://cdn.plot.ly/plotly-2.4.2.min.js"></script> -->
+  <script src="plotly-2.4.2.min.js"></script>
+  <script src="math.js" type="text/javascript"></script>
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link rel="stylesheet" href="webStyle.css">
+</head>
+<body>
+  <h1>Pendulum simulation</h1>
+  <div style="width: 100%;">
+    <div id="graph" style="width:45%;height:45%;float:left;"></div>
+    <div id="pendulum" style="width:45%;height:45%;float:left;"></div>
+</div>
+<button id="startVisualizationButton" onclick="runVisualization()">Visualize the simulation</button>
+</body>
+<script>
+  visRunning = false
+
+  g = 9.82;
+  l = 1;
+  k = 0.8;
+  // helper functions
+  function degToRad(deg) {
+    return deg* (Math.PI / 180.0);
+  } 
+  function radToDeg(rad){
+    return rad* (180.0/Math.PI);
+  }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function getMax(a){
+    return Math.max(...a.map(e => Array.isArray(e) ? getMax(e) : e));
+  }
+
+  function getMin(a){
+    return Math.min(...a.map(e => Array.isArray(e) ? getMin(e) : e));
+  }
+
+  // The euler method
+  function eulerStepper(fun,init,time,stepSize){
+    let arr = Array.from(Array(time.size()[0]), () => new Array(init.length));
+    arr[0] = init;
+    for(let i=0;i<time.size()[0]-1;i++){
+      stepAns = fun(arr[i]);
+      arr[i+1] = math.add(arr[i], math.multiply(stepAns,stepSize))
+    }
+    return arr;
+  }
+
+  //returns next pendulum state
+  function nextState(s) {
+    ns = [s[1],-(g/l) * Math.sin(s[0]) - k*s[1]]
+    return ns;
+  }
+
+  // Setup
+  let simTime = 10;
+  let stepSize = 0.025;
+  let time = math.range(0,simTime,stepSize);
+
+  // INITIAL VALUES!!!
+  init = [degToRad(45),2]
+
+  // Sove
+  res = eulerStepper(nextState,init,time,stepSize);
+
+  // ----------------- DATAPOINT GRAPH
+  var degTrace = {
+    x: time.toArray(),
+    y: res.map(x => x[0]),
+    mode: 'lines',
+    name: 'Degree',
+    line: {
+      color: '#d02f34',
+      width: 1.5
+    }
+  };
+
+  var velTrace = {
+    x: time.toArray(),
+    y: res.map(x => x[1]),
+    mode: 'lines',
+    name: 'Velocity',
+    line: {
+      color: '#2fd0cb',
+      width: 1.5
+    }
+  };
+
+  var degCurPointTrace = {
+    x: [0],
+    y: [0],
+    mode: 'scatter',
+    name: 'Current degrees',
+    marker: {
+      color: '#d02f34',
+      size: 10 }
+  }
+
+  var velCurPointTrace = {
+    x: [0],
+    y: [0],
+    mode: 'scatter',
+    name: 'Current Velocity',
+    marker: {
+      color: '#2fd0cb',
+      size: 10 }
+  }
+
+  var traces_dataP = [degTrace,velTrace,degCurPointTrace,velCurPointTrace];
+
+  var layout = {
+    showlegend: true,
+    legend: {"orientation": "h"},
+    title:"Simulation Result",
+    xaxis: {range: [0, simTime]},
+    yaxis: {range: [getMin(res)*1.5, getMax(res)*1.5]},
+    margin:{
+      l:0,
+      r:0,
+    }
+  };
+
+  // ----------------- Pendulum GRAPH
+
+  var ropeTrace = {
+    x: [0,l*Math.sin(init[0])],
+    y: [0,-l*Math.cos(init[0])],
+    mode: 'line',
+    line: {
+      color: '#000000',
+      width: 1.5
+    }
+  }
+
+  var BallScatter = {
+    x: [l*Math.sin(init[0])],
+    y: [-l*Math.cos(init[0])],
+    mode: 'scatter',
+    marker: {
+      color: '#ff000c',
+      size: 10 
+    }
+  }
+
+  // calc aspectRatio for square graph
+  xRange = [-l*1.1,l*1.1]
+  yRange = [-l*1.1,l*1.1]
+  var pendulumVisLayout = {
+    xaxis: {range: xRange},
+    yaxis: {range: yRange,scaleanchor:'x'},
+    title:"Pendulum state",
+    showlegend: false
+  }
+
+  var config = {responsive: true}
+
+	Graph = document.getElementById('graph');
+	Plotly.newPlot(Graph,traces_dataP,layout,config);
+  pendulum = document.getElementById('pendulum');
+
+  Plotly.newPlot(pendulum,[ropeTrace,BallScatter],pendulumVisLayout,config);
+
+  async function runVisualization(slow){
+    if (visRunning){
+      visRunning = false
+      document.getElementById("startVisualizationButton").innerText = "Run visualization"
+    }else{
+      visRunning = true
+      document.getElementById("startVisualizationButton").innerText = "Stop visualization"
+    }
+    //document.getElementById("startVisualizationButton").disabled = true;
+    timeArray = time.toArray()
+
+    for(let i=0;i<time.size()[0]-1 && visRunning;i++){
+      degCurPointTrace["x"][0] = timeArray[i]; 
+      degCurPointTrace["y"][0] = res[i][0]; 
+      velCurPointTrace["x"][0] = timeArray[i]; 
+      velCurPointTrace["y"][0] = res[i][1]; 
+
+      ropeTrace["x"][1] = l*Math.sin(res[i][0])
+      ropeTrace["y"][1] = -l*Math.cos(res[i][0])
+      BallScatter["x"][0] =  l*Math.sin(res[i][0])
+      BallScatter["y"][0] = -l*Math.cos(res[i][0])
+      
+      Plotly.redraw(Graph);
+      Plotly.redraw(pendulum);
+      await sleep(stepSize * 1000);
+    }
+  }
+</script>
+</html>

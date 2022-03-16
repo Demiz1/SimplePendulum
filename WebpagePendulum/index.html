@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Pendulum Simulation - A Simple dynamic body simulator</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <link href="css/styles2.css" rel="stylesheet" />
+
+        <!--math rendering-->
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src="js/plotly-2.4.2.min.js"></script>
+        <script src="js/math.js" type="text/javascript"></script>
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="#page-top">Pendulum Simulator</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#simulation">Simulation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#parts">Parts</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#signup">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="text-center">
+                        <h1 class="mx-auto my-0 text-uppercase">Pendulum Simulation</h1>
+                        <h2 class="text-white-50 mx-auto mt-2 mb-5">A simple system simulator</h2>
+                        <a class="btn btn-primary" href="#simulation">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- About-->
+        <section class="about-section text-center" id="simulation">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="text-white mb-4">Simulation</h2>
+                        <p class="text-white-50">
+                        In this section you can see a fully working pendulum simulator, running on javascript on your device.
+                        </p>
+                    </div>
+                </div>
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-6">
+                        <div class="text-center h-100 project p-5">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <div id="graph_stateTime_main"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="text-center h-100 project p-5">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <div id="graph_stateViz_main"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary w-100" id="visualizeButton">Visualize</button>
+                    </div>
+                </div>
+                <div class="row gx-5 mb-5 mb-lg-0 justify-content-center p-5">
+                    <div class="input-group mb-3 col">
+                        <input type="text" class="form-control" id="input_gravity">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Gravity</span>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3 col">
+                        <input type="text" class="form-control" id="input_initialAngle">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Initial Angle</span>
+                        </div>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="input-group mb-3 col">
+                        <input type="text" class="form-control" id="input_mass">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Pendulum mass</span>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3 col">
+                        <input type="text" class="form-control" id="input_initialAngleRate">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Initial angelspeed</span>
+                        </div>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="input-group mb-3 col">
+                        <input type="text" class="form-control" id="input_length">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Pendulum length</span>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3 col">
+                        <input type="text" class="form-control" id="input_simTime">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Pendulum simTime</span>
+                        </div>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="input-group mb-3 col">
+                        <input type="text" class="form-control" id="input_simStep">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Pendulum simStep</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group mb-3 col">
+                        <input type="text" class="form-control" id="input_friction">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Pendulum friction</span>
+                        </div>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="col-6 mb-3">
+                        <button type="button" class="btn btn-primary w-100 h-100" id="updateSimulationButton">Update simulation</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Projects-->
+        <section class="Parts-section bg-light" id="parts">
+            <div class="container px-4 px-lg-5">
+                <!-- Featured Project Row-->
+                <div class="row gx-0 mb-4 mb-lg-5 align-items-center mt-2">
+                    <div class="col-8 m-0 row">
+                        <div class="col-4 rounded p-2 d-flex">
+                            <div class="border border-primary cards">
+                                <a class="nav-link" href="#MechModelExp">
+                                    <div class="text-center">
+                                        <h4 class="text-black">Mechanical model</h4>
+                                        <p class="text-black-50 mb-0">
+                                            The mechanical model is the part which describes what the forces acting on your
+                                            system are and how your model should evolve over time.
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-4 rounded p-2 d-flex">
+                            <div class="border border-primary cards">
+                                <a class="nav-link" href="#SolverExp">
+                                    <div class="text-center">
+                                        <h4 class="text-black">Solver</h4>
+                                        <p class="text-black-50 mb-0">
+                                            The solver is the method we use to calculate how we should update our state space 
+                                            from one time step in our simulation.
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-4 rounded p-2 d-flex">
+                            <div class="border border-primary cards">
+                                <a class="nav-link" href="#VisualizationExp">
+                                    <div class="text-center">
+                                        <h4 class="text-black">Visualization</h4>
+                                        <p class="text-black-50 mb-0">
+                                            I beleve that is is very important to create the means to visualize and interpret the 
+                                            result from simulations.
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="featured-text text-center text-lg-left">
+                            <h4>The parts of the simulator</h4>
+                            <p class="text-black-50 mb-0">These are the most important parts of the simulator</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center" id="MechModelExp">
+                    <div class="col-lg-6" id="openMechModal"><img class="img-fluid" src="assets/img/MechModel.png" alt="..." /></div>
+                    <div class="col-lg-6">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <h4 class="text-white">Mechanical model</h4>
+                                    <p class="mb-0 text-white-50">Here I explain how to derive the forces of a pendulum.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row gx-0 justify-content-center"  id="SolverExp">
+                    <div class="col-lg-6" id="openSolverModal"><img class="img-fluid" src="assets/img/Euler_method.png" alt="..." /></div>
+                    <div class="col-lg-6 order-lg-first">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-right">
+                                    <h4 class="text-white">Solver</h4>
+                                    <p class="mb-0 text-white-50">Here I explain the principle of the simplest solver, the Euler method.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center"  id="VisualizationExp">
+                    <div class="col-lg-6" id="openVisualizationModal"><img class="img-fluid" src="assets/img/Graphs.png" alt="..." /></div>
+                    <div class="col-lg-6">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <h4 class="text-white">Visualization</h4>
+                                    <p class="mb-0 text-white-50">Here I explain how the plot librarys work.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="signup-section" id="signup">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="card py-4 h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-envelope text-primary mb-2"></i>
+                                <h4 class="text-uppercase m-0">Email</h4>
+                                <hr class="my-4 mx-auto" />
+                                <div class="small text-black-50"><a href="#!">hmm@gmail.com</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">A Gustav Lindström website 2021</div></footer>
+
+        <!-- The Mech Modal -->
+        <div id="MechModal" class="custom_modal">
+
+            <!-- Modal content -->
+            <div class="modal-content modalHeightFix">
+                <div class="modal-header">
+                    <span class="close" id="closeMechModal">&times;</span>
+                    <h2>Mechanical Model</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row gx-0 justify-content-center">
+                        <div class="col-6 scrollY">
+                            <div class="">
+                                <h1 class="text-center">Introduction</h1>
+                                <p>
+                                    In this section we will define all the forces in newtonian dynamics. As with all dynamics problems, we first want to think carefully about 
+                                    what forces are precent. In this solution, I will derive the forces for gravity and a friction. 
+                                    But a force i'm skipping is the aerodynamic breaking.
+                                </p>
+                                <p>
+                                    Since this problem concerns only rotational bodys, we can make the problem much easier if we 
+                                    solve it using Newtons 2nd law.
+                                </p>
+                                <p>
+                                    The vanilla Newton equaiton:
+                                    $$\sum F = m \cdot a$$
+                                </p>
+                                <hr class="solid">
+                                <div class="row">
+                                    <h2>Gravity</h2>
+                                    <p>
+                                        The gravity produces a moment on the pendulum. The moment will be some fraction of the total gravity, based on the angle of the pendulum.
+                                        If the pendulum have zero angle, all acceleration from gravity will be taken by the stiff string, holding the pendulum. 
+                                        If the pendulum is at a \(\pm 90\)-degree angle, all gravitational acceleration will be acting on the pendulum body.
+                                    </p>
+                                    <p>The gravitational force can be divided into two components with some trigonometry. We will have one component in the 
+                                        direction of the string, and another in the direction of the pendulum path. The one we want is \(\sin(\theta)\). 
+                                        The final moment the gravitational force applies to the pendulum is:
+                                        $$F_{graviy} =  - g\cdot m \cdot \sin(\theta)$$
+                                    </p>
+                                </div>
+                                <div class="row">
+                                    <h2>Dampening</h2>
+                                    <p>
+                                        In real life, the pendulum will have some dampening due to friction in the joint. 
+                                        This force is simply some dampening constant \(K\) times the velocity of the pendulum.
+                                        $$F_{dampening} = - K \cdot v$$
+                                    </p>
+                                </div>
+
+                                <div class="row">
+                                    <h2>Expressing the forces in polar coordinates</h2>
+                                    <p>
+                                        Since this problem uses polar coordinates, we should also express the forces in terms of angular acceleration rather than acceleration.
+                                        This conversion is rather simple, we simply apply the formula for arc length and its derivarives.
+                                        $$ p_{position} = \theta \cdot {radius}$$
+                                        $$ v_{velocity} = \dot \theta \cdot {radius}$$
+                                        $$ a_{acceleration} = \ddot \theta \cdot {radius}$$
+                                        If we insert the expression with acceleration into newtons 2nd law, we get the following expression for the law, expressed in polar coordinates.
+                                        $$\sum F = m \cdot \ddot \theta \cdot {radius}$$
+                                    </p>
+                                </div>
+                                <div class="row">
+                                    <h2>Combining the accelerations</h2>
+                                    <p>
+                                        With this, we are ready to combine all the forces.
+                                        $$F_{graviy} + F_{dampening} = m \cdot \ddot \theta \cdot {radius}$$
+                                        $$- g\cdot m \cdot \sin(\theta) - K \cdot v = m \cdot \ddot \theta \cdot {radius}$$
+                                        Freeing \(\ddot \theta\) gives:
+                                        $$ - \frac{g \cdot \sin(\theta)}{radius} - \frac{K \cdot v}{m \cdot {radius}} =\ddot \theta$$
+                                        At this point we are finished! all we need is a formula for the acceleration the system experiences.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 p-2 float-right pt-0 pb-0">
+                            <div class="container" style="height: 63%;">
+                                <div class="row h-100 col-10">
+                                    <div class="my-auto">
+                                        <img class="img-fluid position-sticky" src="assets/img/forcesOverview.png" alt="..." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <h3>Mechanical Model</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- The solver Modal -->
+        <div id="SolverModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content modal-dialog-scrollable">
+                <div class="modal-header">
+                    <span class="close" id="closeSolverModal">&times;</span>
+                    <h2>Solver</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row gx-0 justify-content-center">
+                        <div class="col-6">
+                            <h1 class="text-center">Introduction</h1>
+                            <p>
+                                From the previous section, we ended upp with an expression for all the acceleration the pendulum experiences. 
+                                In this section, we will use a metod of integrating the acceleration to calculate the pendulum velocity, and then once more 
+                                to calculate the angle.
+                            </p>
+                            <p>
+                                The integration metod I used in this project was the <a class="text-decoration-none" href="https://en.wikipedia.org/wiki/Euler_method">Euler metod</a>. 
+                                This is a very crude but functional metod for integrating differential equations. 
+                                The main drawback of the Euler metod is that it quickly diverges from the true solution if the stepsize the simulation uses is too large. 
+                                This could happen if the dynamics of the system have some states that changes very rappidly.
+                            </p>
+                            <p>
+                                A way to sidestep the problem is to simply 
+                                Decreese the stepsize, but one can only decrease the stepsize to much untill the computational cost and simulation speed suffers too much.
+                            </p>
+                            <hr class="solid">
+                            <div class="row">
+                                <h2>Implementation</h2>
+                                <p>
+                                    The implementation of the Euler metod is very simple. The ide is simply to take the current value, and add a very small amount of the acceleration.
+                                    $$x_{t+1} = x_t + \dot x \cdot \Delta t$$
+                                    In our pendulum, we have two states that we have to integrate, the velocity and the angle. So the implementation is best understod with matrixes.
+                                    $$ \begin{bmatrix}\theta_{t+1} \\ \dot \theta_{t+1} \end{bmatrix} = \begin{bmatrix}\theta_{t} \\ \dot \theta_{t} \end{bmatrix} +
+                                    \begin{bmatrix}\dot \theta_{t} \\ \ddot \theta \end{bmatrix} \cdot \Delta t$$
+                                    Note how \(\ddot \theta\) is what we calculated in the previous section, all that is left to do is simply plug the acceleration equation into this formula, and the solver is ready to go!
+                                    $$ \begin{bmatrix}\theta_{t+1} \\ \dot \theta_{t+1} \end{bmatrix} = \begin{bmatrix}\theta_{t} \\ \dot \theta_{t} \end{bmatrix} +
+                                    \begin{bmatrix}\dot \theta_{t} \\ -\frac{g \cdot \sin(\theta)}{radius} - \frac{K \cdot v}{m \cdot {radius}}\end{bmatrix} \cdot \Delta t$$
+                                    The only thing we have to do in javascript is to put this expression into a loop with initial values for the velocity and angle.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <h3>Solver</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Visualization Modal -->
+        <div id="VisualizationModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content modal-dialog-scrollable">
+                <div class="modal-header">
+                    <span class="close" id="closeVisualizationModal">&times;</span>
+                    <h2>Visualization</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="row gx-0 justify-content-center">
+                        <div class="col-6">
+                            <p>
+                                In this project, the graphs are made with <a class="text-decoration-none" href="https://plotly.com">Plotly</a>. 
+                                I found this to be a fantastic library to make nice plots in browser. Is somewhat similar to python's matplotlib, but with a more explicit setting interface.
+                            </p>
+                            <p>
+                                The first thing to plot was the \(\theta\) and \(\dot\theta\) variables vs time. This way we can see if we have any obvious bugs that we have to handle. 
+                            </p>
+                            <div id="graph_modal" class="col-6"></div>
+                            <p>
+                                The second graph I wanted was a plot that realy represented the pendulum in a sertain state. The plot is actually made up of two independent plots in the same graph.
+                                One line graph between the origin and the pendulum body. And a scatter plot with the point beeing the body of the pendulum with a huge point marker.
+                            </p>
+                            <div id="pendulum_modal" class="col-6"></div>
+                            <p>
+                                Once that was done. The obvious thing to add was a way to animate the plots. This was done using a scatter plot in the <bf>state vs time</bf> graph. 
+                                All i had to do replace the point in this plot to the current animation step, and redraw the graph (plotly have a nice redraw function).
+                            </p>
+                            <p>
+                                I strongly beleve that good visualizations, that can help us understand complex data is a scarsity. 
+                                With good graphs and tools, we can allow complex dynamics become easier to understand.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <h3>Visualization</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <script src="js/scripts2.js"></script>
+        <script src="js/pendulum.js"></script>
+    </body>
+</html>
